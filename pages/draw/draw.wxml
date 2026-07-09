@@ -1,0 +1,76 @@
+<view class="page draw-page">
+  <view class="flow-bg"><view class="flow-a"></view><view class="flow-b"></view><view class="flow-c"></view></view>
+  <view class="ritual-frame"></view>
+
+  <view class="section draw-head">
+    <view class="kicker">ASK THE WILL</view>
+    <view class="draw-title">问天意</view>
+    <view class="draw-subtitle">同组成员可以多次抽取候选。本轮结果只有点击“决定吃这家”后才会写入历史，并参与最近吃过减值。</view>
+  </view>
+
+  <view class="section dark-panel stack">
+    <view class="field">
+      <view class="label">标签</view>
+      <input class="input dark-input" value="{{filters.tag}}" data-field="filters.tag" placeholder="手动输入，或从下方选择" placeholder-class="dark-placeholder" bindinput="onInput" />
+      <view wx:if="{{tagOptions.length > 0}}" class="filter-tag-pool">
+        <view wx:for="{{tagOptions}}" wx:key="key" class="filter-tag-chip {{item.className}} {{item.selected ? 'active' : ''}}" data-tag="{{item.label}}" catchtap="toggleTagFilter">
+          <text>{{item.label}}</text>
+          <text class="tag-count">{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="field"><view class="label">价位</view><input class="input dark-input" value="{{filters.priceRange}}" data-field="filters.priceRange" placeholder="精确匹配，例如 50-80" placeholder-class="dark-placeholder" bindinput="onInput" /></view>
+    <view class="field"><view class="label">位置关键词</view><input class="input dark-input" value="{{filters.locationText}}" data-field="filters.locationText" placeholder="例如 国贸 / 西湖 / 公司楼下" placeholder-class="dark-placeholder" bindinput="onInput" /></view>
+  </view>
+
+  <view class="draw-actions">
+    <button class="ritual-button" loading="{{drawing}}" disabled="{{sessionStatus !== 'active'}}" bindtap="draw">窥探天意</button>
+    <button class="ghost-button" bindtap="refreshVotes">刷新投票</button>
+  </view>
+
+  <view wx:if="{{loadingSession}}" class="section dark-panel empty-dark">正在读取本轮天意...</view>
+  <view wx:elif="{{results.length === 0}}" class="section dark-panel empty-dark">本轮还没有结果。可以连续抽多次，重复餐厅会自动合并。</view>
+
+  <view wx:if="{{syncText}}" class="section sync-banner">{{syncText}}</view>
+
+  <view wx:if="{{results.length > 0}}" class="section vote-bar">
+    <button class="abstain-button {{myVoteRestaurantId === 'abstain' ? 'active' : ''}}" disabled="{{sessionStatus !== 'active'}}" bindtap="abstainVote">弃权 {{abstainText}}</button>
+    <button class="new-round-button" bindtap="newRound">新一轮</button>
+  </view>
+
+  <view wx:for="{{results}}" wx:key="index" class="section dark-panel result-card {{item.isVoted ? 'is-voted' : ''}}">
+    <view wx:if="{{item.hasMultiDraw}}" class="draw-count">{{item.countText}}</view>
+    <view class="result-topline"><view class="result-kicker">天意候选</view><view class="vote-rank-chip {{item.hasVoters ? 'has-votes' : ''}}">{{item.voteSummaryText}}</view></view>
+    <view wx:if="{{item.isVoted}}" class="my-vote-banner">你已投这家</view>
+    <view class="result-name">{{item.restaurant.name}}</view>
+    <view class="draw-subtitle">{{item.restaurant.address || '未填写地址'}}</view>
+    <view class="tag-row">
+      <text class="draw-chip">{{item.restaurant.priceRange || '不限价位'}}</text>
+      <text class="draw-chip">候选 {{item.candidateCount}} 家</text>
+      <text class="draw-chip">概率 {{item.probability.total}}</text>
+      <text wx:for="{{item.restaurant.tags}}" wx:for-item="tag" wx:key="*this" class="draw-chip">{{tag}}</text>
+    </view>
+
+    <view class="vote-row">
+      <view class="vote-avatars">
+        <view wx:for="{{item.voters}}" wx:key="index" class="vote-avatar-wrap">
+          <image wx:if="{{item.avatarUrl}}" class="vote-avatar" src="{{item.avatarUrl}}" mode="aspectFill" />
+          <view wx:else class="vote-avatar fallback">{{item.fallbackText}}</view>
+        </view>
+        <view wx:if="{{!item.hasVoters}}" class="vote-empty">还没人投</view>
+      </view>
+      <button class="vote-button {{item.isVoted ? 'active' : ''}}" disabled="{{sessionStatus !== 'active'}}" data-id="{{item.restaurant._id}}" bindtap="voteResult">{{item.voteButtonText}}</button>
+    </view>
+
+    <view class="probability-card">
+      <view class="probability-header"><view class="probability-label">概率说明</view><view class="probability-total">{{item.probability.total}}</view></view>
+      <view wx:for="{{item.probability.terms}}" wx:key="label" class="probability-term {{item.type}}">
+        <view class="term-main"><text class="term-label">{{item.label}}</text><text class="term-value">{{item.value}}</text></view>
+        <view class="term-reason">{{item.reason}}</view>
+      </view>
+    </view>
+
+    <button wx:if="{{sessionStatus === 'active'}}" class="final-button" loading="{{finalizing}}" disabled="{{finalizing}}" data-id="{{item.restaurant._id}}" bindtap="finalizeResult">决定吃这家</button>
+    <view wx:else class="finalized-note">本轮已计入历史</view>
+  </view>
+</view>

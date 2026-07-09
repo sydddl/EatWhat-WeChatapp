@@ -1,0 +1,435 @@
+.restaurant-page {
+  padding-bottom: 64rpx;
+}
+.list-head {
+  padding-top: 8rpx;
+  text-align: center;
+}
+.eyebrow {
+  color: #7f3aef;
+  font-size: 22rpx;
+  font-weight: 900;
+  letter-spacing: 0;
+  margin-bottom: 10rpx;
+}
+.token-dock {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  gap: 30rpx;
+  padding: 14rpx 0 16rpx;
+}
+.token-tray {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  width: auto;
+  height: 66rpx;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.token-tray::before {
+  display: none;
+}
+.plus-tray,
+.minus-tray {
+  background: transparent;
+  box-shadow: none;
+}
+
+.hex-coin {
+  position: relative;
+  z-index: 2;
+  width: 58rpx;
+  height: 58rpx;
+  clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(60deg);
+  transition: transform 140ms ease, opacity 140ms ease;
+}
+.hex-coin::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: inherit;
+  background: #fdfdfb;
+}
+.hex-coin::after {
+  content: "";
+  position: absolute;
+  inset: 7rpx;
+  clip-path: inherit;
+  opacity: 1;
+}
+.hex-coin text {
+  position: relative;
+  z-index: 3;
+  font-size: 30rpx;
+  font-weight: 950;
+  line-height: 1;
+  transform: rotate(-60deg);
+}
+.plus-coin::before {
+  background: rgba(198, 255, 52, 0.18);
+}
+.plus-coin::after {
+  background: #c6ff34;
+}
+.plus-coin {
+  color: #151515;
+}
+.minus-coin::before {
+  background: rgba(255, 51, 95, 0.16);
+}
+.minus-coin::after {
+  background: #ff335f;
+}
+.minus-coin {
+  color: #ffffff;
+}
+.hex-coin.is-selected {
+  transform: rotate(60deg) scale(1.08);
+}
+.hex-coin.is-selected::before {
+  background: #7f3aef;
+}
+.hex-coin.is-empty::before {
+  background: rgba(21, 21, 21, 0.08);
+}
+.hex-coin.is-empty::after {
+  background: #fdfdfb;
+}
+.hex-coin.is-empty text {
+  opacity: 0;
+}
+
+.restaurant-card {
+  position: relative;
+  box-sizing: border-box;
+  margin-bottom: 18rpx;
+  padding: 32rpx 120rpx 58rpx 32rpx;
+  overflow: visible;
+  border: 3rpx solid rgba(165, 165, 165, 0.459);
+  border-radius: 42rpx;
+  background: #ffffff;
+  color: #151515;
+  box-shadow: 0 12rpx 34rpx rgba(21, 21, 21, 0.048);
+  transition: opacity 160ms ease, transform 160ms ease, background 160ms ease;
+}
+.restaurant-card.is-disabled {
+  opacity: 0.68;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 10rpx 26rpx rgba(21, 21, 21, 0.04);
+}
+.restaurant-card.is-placing {
+  border-color: rgba(127, 58, 239, 0.22);
+}
+.orb-socket {
+  position: absolute;
+  right: 22rpx;
+  top: 22rpx;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 20rpx;
+  background: #fdfdfb;
+  box-shadow: inset -2rpx 0 0 1rpx rgba(21, 21, 21, 0.035);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.enable-orb {
+  position: absolute;
+  right: 27rpx;
+  top: 27rpx;
+  z-index: 4;
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 17rpx;
+  background: radial-gradient(circle at 32% 22%, rgba(255,255,255,0.34), rgba(255,255,255,0) 30%), radial-gradient(circle at 72% 82%, rgba(198,255,52,0.38), rgba(198,255,52,0) 42%), #7f3aef;
+  box-shadow: -10rpx 0 34rpx rgba(198, 255, 52, 0.38), inset 0 2rpx 0 rgba(255,255,255,0.26);
+  transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+.enable-orb::before {
+  content: "";
+  position: absolute;
+  left: -16rpx;
+  top: 16rpx;
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 18rpx 0 0 18rpx;
+  background: #7f3aef;
+  opacity: 0.56;
+}
+.is-disabled .orb-socket {
+  opacity: 0;
+  transform: scale(0.76);
+}
+.is-disabled .enable-orb {
+  background: rgba(21, 21, 21, 0.09);
+  box-shadow: inset 0 0 0 1rpx rgba(21, 21, 21, 0.06);
+  transform: scale(0.76) translateX(-8rpx);
+}
+.is-disabled .enable-orb::before,
+.is-disabled .orb-shine {
+  opacity: 0;
+}
+.orb-mark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50rpx;
+  height: 50rpx;
+  color: #ffffff;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 48rpx;
+  text-align: center;
+}
+.restaurant-main {
+  text-align: left;
+}
+.title-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 10rpx;
+  max-width: 100%;
+}
+.name {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  color: #151515;
+  font-size: 36rpx;
+  font-weight: 900;
+  line-height: 1.24;
+  letter-spacing: 0;
+  text-align: left;
+}
+
+.state-label {
+  display: none;
+}
+.is-disabled .state-label {
+  background: rgba(21,21,21,0.06);
+  color: rgba(21,21,21,0.42);
+}
+.disabled {
+  color: rgba(21,21,21,0.38);
+  text-decoration: none;
+}
+.address {
+  max-width: none;
+  margin: 8rpx 0 0;
+  color: rgba(21,21,21,0.52);
+  font-size: 24rpx;
+  line-height: 1.36;
+  text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8rpx;
+  margin-top: 12rpx;
+  padding-right: 0;
+  text-align: left;
+}
+.restaurant-card .chip {
+  flex: 0 1 auto;
+  max-width: 100%;
+  border-radius: 14rpx;
+  background: rgba(21,21,21,0.055);
+  color: rgba(21,21,21,0.68);
+}
+.restaurant-card .price-chip {
+  background: rgba(127,58,239,0.14);
+  color: #151515;
+}
+.restaurant-card .weight-chip {
+  background: rgba(21,21,21,0.045);
+  color: rgba(21,21,21,0.5);
+}
+.restaurant-card .tag-chip {
+  font-weight: 850;
+}
+.restaurant-card .tag-chip.tag-tone-0 {
+  background: rgba(99, 110, 250, 0.14);
+  color: #3b46c8;
+}
+.restaurant-card .tag-chip.tag-tone-1 {
+  background: rgba(239, 85, 59, 0.14);
+  color: #b73522;
+}
+.restaurant-card .tag-chip.tag-tone-2 {
+  background: rgba(0, 204, 150, 0.16);
+  color: #00785a;
+}
+.restaurant-card .tag-chip.tag-tone-3 {
+  background: rgba(171, 99, 250, 0.14);
+  color: #7337c9;
+}
+.restaurant-card .tag-chip.tag-tone-4 {
+  background: rgba(255, 161, 90, 0.2);
+  color: #9a5519;
+}
+.restaurant-card .tag-chip.tag-tone-5 {
+  background: rgba(25, 211, 243, 0.18);
+  color: #087b8d;
+}
+.restaurant-card .tag-chip.tag-tone-6 {
+  background: rgba(255, 102, 146, 0.15);
+  color: #b92a5a;
+}
+.restaurant-card .tag-chip.tag-tone-7 {
+  background: rgba(182, 232, 128, 0.28);
+  color: #4c741e;
+}
+.restaurant-card .tag-chip.tag-tone-8 {
+  background: rgba(255, 151, 255, 0.16);
+  color: #9a3b9a;
+}
+.restaurant-card .tag-chip.tag-tone-9 {
+  background: rgba(254, 203, 82, 0.26);
+  color: #80600a;
+}
+.card-footer {
+  display: block;
+  margin-top: 14rpx;
+}
+.card-medal-zone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8rpx 28rpx;
+  min-width: 0;
+  padding-right: 8rpx;
+}
+.card-medal-rack {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8rpx;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  min-height: 48rpx;
+  margin: 0;
+}
+.my-medals {
+  flex: 0 0 auto;
+}
+.other-medals {
+  flex: 1 1 auto;
+  min-width: 96rpx;
+  padding-left: 24rpx;
+  border-left: 1rpx solid rgba(21,21,21,0.1);
+}
+.card-medal {
+  position: relative;
+  flex: 0 0 48rpx;
+  width: 48rpx;
+  height: 48rpx;
+}
+.medal-pin {
+  display: none;
+}
+.medal-hex {
+  position: absolute;
+  inset: 0;
+  width: 48rpx;
+  height: 48rpx;
+  clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #151515;
+  transform: rotate(60deg);
+}
+.medal-hex::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: inherit;
+}
+.medal-hex::after {
+  content: "";
+  position: absolute;
+  inset: 6rpx;
+  clip-path: inherit;
+}
+.medal-plus .medal-hex::before {
+  background: rgba(198, 255, 52, 0.18);
+}
+.medal-plus .medal-hex::after {
+  background: #c6ff34;
+}
+.medal-minus .medal-hex::before {
+  background: rgba(255, 51, 95, 0.16);
+}
+.medal-minus .medal-hex::after {
+  background: #ff335f;
+}
+.medal-minus .medal-hex {
+  color: #ffffff;
+}
+.is-mine .medal-hex::before {
+  background: rgba(21, 21, 21, 0.12);
+}
+.is-mine.medal-plus .medal-hex::after {
+  background: rgba(198, 255, 52, 0.9);
+}
+.is-mine.medal-minus .medal-hex::after {
+  background: rgba(255, 51, 95, 0.86);
+}
+.medal-hex text {
+  position: relative;
+  z-index: 2;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 950;
+  line-height: 48rpx;
+  text-align: center;
+  transform: rotate(-60deg);
+}
+.actions {
+  display: none;
+}
+.mini {
+  position: absolute;
+  right: 30rpx;
+  bottom: 20rpx;
+  z-index: 6;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 72rpx;
+  height: 38rpx;
+  margin: 0;
+  margin-left: auto;
+  padding: 0 14rpx;
+  border: 1rpx solid rgba(21,21,21,0.14);
+  border-radius: 999rpx;
+  background: rgba(255,255,255,0.72);
+  color: rgba(21,21,21,0.48);
+  font-size: 20rpx;
+  font-weight: 750;
+  line-height: 36rpx;
+}
+.mini::after {
+  border: 0;
+}

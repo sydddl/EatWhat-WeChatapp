@@ -1,0 +1,23 @@
+.heading {
+  color: #111827;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.body {
+  color: #475467;
+  font-size: 28rpx;
+  line-height: 1.7;
+}
+
+.transfer-text {
+  min-height: 260rpx;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.result-card {
+  border-color: #b2ddff;
+  background: #f5fbff;
+}

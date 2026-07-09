@@ -1,0 +1,78 @@
+<view class="page home-page">
+  <view wx:if="{{!groupId}}" class="section setup-card">
+    <view class="paper-grid"></view>
+    <view class="liquid-dots setup-dots">
+      <view wx:for="{{dotItems}}" wx:key="*this" class="dot d{{index}}"></view>
+    </view>
+    <view class="setup-copy">
+      <view class="eyebrow">EATWHAT CREW</view>
+      <view class="title">{{copy.setupTitleA}}<br />{{copy.setupTitleB}}</view>
+      <view class="subtitle">{{copy.setupSubtitle}}</view>
+    </view>
+    <view class="field"><view class="label">{{copy.groupNameLabel}}</view><input class="input" value="{{groupName}}" bindinput="onGroupNameInput" /></view>
+    <button class="button primary" loading="{{creating}}" bindtap="createGroup">{{copy.createGroup}}</button>
+    <view class="divider">{{copy.or}}</view>
+    <view class="field"><view class="label">{{copy.existingGroupId}}</view><input class="input" value="{{joinGroupId}}" placeholder="{{copy.groupIdPlaceholder}}" bindinput="onJoinGroupIdInput" /></view>
+    <button class="button secondary" loading="{{joining}}" bindtap="joinGroup">{{copy.joinGroup}}</button>
+    <view wx:if="{{recentGroups.length > 0}}" class="history-groups">
+      <view class="history-title">{{copy.recentGroups}}</view>
+      <view wx:for="{{recentGroups}}" wx:key="groupId" class="history-group-card">
+        <view class="history-group-info">
+          <view class="history-group-name">{{item.name}}</view>
+          <view class="history-group-meta">{{item.memberCount || 1}} {{copy.person}} / {{item.restaurantCount || 0}} {{copy.restaurantUnit}}</view>
+        </view>
+        <view class="history-group-actions">
+          <button class="history-group-action enter-action" data-id="{{item.groupId}}" loading="{{joining}}" catchtap="selectRecentGroup">{{copy.enter}}</button>
+          <button class="history-group-action leave-action" data-id="{{item.groupId}}" loading="{{leaving}}" catchtap="leaveRecentGroup">{{copy.leaveGroup}}</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <block wx:else>
+    <view class="section hero-card">
+      <view class="paper-grid"></view>
+      <view class="liquid-dots hero-dots">
+        <view wx:for="{{dotItems}}" wx:key="*this" class="dot d{{index}}"></view>
+      </view>
+      <view class="hero-top">
+        <view>
+          <view class="eyebrow">FOOD POOL</view>
+          <view class="group-name">{{groupName || copy.defaultCurrentGroup}}</view>
+        </view>
+        <view class="group-badge">GROUP</view>
+      </view>
+      <view class="hero-grid">
+        <view class="stat-block primary-stat" bindtap="goRestaurants"><view class="count">{{restaurantCount}}</view><view class="stat-label">{{copy.enabledRestaurants}}</view></view>
+        <view class="stat-block member-stat" bindtap="goMembers"><view class="member-count">{{memberCount}}</view><view class="stat-label">{{copy.members}}</view></view>
+      </view>
+      <view class="muted group-id">groupId: {{groupId}}</view>
+      <view class="member-panel">
+        <view class="member-row">
+          <view wx:for="{{members}}" wx:key="index" class="member-avatar-wrap">
+            <image wx:if="{{item.avatarUrl}}" class="member-avatar" src="{{item.avatarUrl}}" mode="aspectFill" />
+            <view wx:else class="member-dot m{{index}}">{{item.fallbackText}}</view>
+          </view>
+        </view>
+        <view class="member-side">
+          <view class="member-copy">{{memberCount}} {{copy.memberPool}}</view>
+          <button class="avatar-button" bindtap="goMembers">{{copy.memberSettings}}</button>
+        </view>
+      </view>
+      <view class="row small-actions">
+        <button class="mini" bindtap="copyGroupId">{{copy.copyGroupId}}</button>
+        <button class="mini" bindtap="switchGroup">{{copy.switchGroup}}</button>
+      </view>
+    </view>
+
+    <view class="section stack">
+      <button class="button primary" bindtap="goDraw">{{copy.startDraw}}</button>
+      <button class="button secondary" bindtap="goRestaurants">{{copy.manageRestaurants}}</button>
+      <button class="button secondary" bindtap="goHistory">{{copy.viewHistory}}</button>
+      <button class="button secondary" bindtap="goProbability">{{copy.probability}}</button>
+      <button class="button secondary" bindtap="goDocs">{{copy.docs}}</button>
+    </view>
+  </block>
+
+  <view wx:if="{{loading}}" class="empty">{{copy.loading}}</view>
+</view>

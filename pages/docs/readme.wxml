@@ -1,0 +1,33 @@
+<view class="page docs-page">
+  <view class="section docs-hero">
+    <view class="hero-mark mark-a"></view>
+    <view class="hero-mark mark-b"></view>
+    <view class="hero-copy">
+      <view class="eyebrow">README</view>
+      <view class="title">{{hero.title}}</view>
+      <view class="subtitle">{{hero.subtitle}}</view>
+    </view>
+    <view class="hero-count">{{hero.count}}</view>
+  </view>
+
+  <view class="section quick-grid">
+    <view wx:for="{{quickCards}}" wx:key="number" class="quick-card {{index % 2 === 1 ? 'dark' : ''}}">
+      <view class="quick-number">{{item.number}}</view>
+      <view class="quick-label">{{item.label}}</view>
+    </view>
+  </view>
+
+  <view wx:for="{{docs}}" wx:key="index" class="section doc-card">
+    <view class="doc-index">{{item.index}}</view>
+    <view class="doc-content">
+      <view class="heading">{{item.title}}</view>
+      <view class="body">{{item.body}}</view>
+      <view wx:if="{{item.chips && item.chips.length}}" class="tag-row">
+        <text wx:for="{{item.chips}}" wx:key="*this" class="doc-chip">{{item}}</text>
+      </view>
+      <block wx:if="{{item.formulas && item.formulas.length}}">
+        <view wx:for="{{item.formulas}}" wx:key="*this" class="formula-line">{{item}}</view>
+      </block>
+    </view>
+  </view>
+</view>

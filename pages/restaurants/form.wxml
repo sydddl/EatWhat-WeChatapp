@@ -1,0 +1,82 @@
+<view class="page restaurant-form-page">
+  <view class="section form-hero">
+    <view class="hero-mark mark-a"></view>
+    <view class="hero-mark mark-b"></view>
+    <view class="hero-copy">
+      <view class="eyebrow">RESTAURANT</view>
+      <view class="title">{{restaurantId ? '编辑餐厅' : '添加餐厅'}}</view>
+      <view class="subtitle">维护餐厅信息、标签和基础权重。保存后会进入当前小组的餐厅池。</view>
+    </view>
+    <view class="hero-badge">{{form.disabled ? '停用' : '启用'}}</view>
+  </view>
+
+  <view class="section parse-card">
+    <view class="panel-head">
+      <view>
+        <view class="panel-title">大众点评分享文本</view>
+        <view class="panel-caption">粘贴分享内容后，可自动尝试识别店名、地址和链接。</view>
+      </view>
+      <button class="parse-button" bindtap="parseShareText">解析</button>
+    </view>
+    <textarea class="textarea share-textarea" value="{{shareText}}" placeholder="粘贴大众点评分享文本" bindinput="onShareTextInput" />
+  </view>
+
+  <view class="section panel form-panel">
+    <view class="panel-title">基础信息</view>
+    <view class="field required-field">
+      <view class="label-row"><view class="label">店名</view><view class="required-dot">必填</view></view>
+      <input class="input" value="{{form.name}}" data-field="form.name" placeholder="例如 学校东门牛肉面" bindinput="onInput" />
+    </view>
+    <view class="field">
+      <view class="label">地址</view>
+      <input class="input" value="{{form.address}}" data-field="form.address" placeholder="例如 东门外 200 米 / 某商场 B1" bindinput="onInput" />
+    </view>
+    <view class="split-row">
+      <view class="field split-field">
+        <view class="label">价位</view>
+        <input class="input" value="{{form.priceRange}}" data-field="form.priceRange" placeholder="50-80" bindinput="onInput" />
+      </view>
+      <view class="field weight-field">
+        <view class="label">基础权重</view>
+        <input class="input weight-input" type="number" value="{{form.baseWeight}}" data-field="form.baseWeight" bindinput="onInput" />
+      </view>
+    </view>
+  </view>
+
+  <view class="section panel form-panel">
+    <view class="panel-title">标签与来源</view>
+    <view class="field">
+      <view class="label">标签</view>
+      <input class="input" value="{{tagsText}}" placeholder="可添加多个：火锅, 近, 清淡" bindinput="onTagsInput" />
+      <view class="field-hint">用逗号、空格、顿号分隔；一个餐厅可以有多个 tag。</view>
+      <view wx:if="{{form.tags.length > 0}}" class="tag-preview">
+        <text wx:for="{{form.tags}}" wx:for-item="tag" wx:key="*this" class="tag-preview-chip">{{tag}}</text>
+      </view>
+    </view>
+    <view class="field">
+      <view class="label">来源链接</view>
+      <input class="input" value="{{form.sourceUrl}}" data-field="form.sourceUrl" placeholder="大众点评或其他来源链接" bindinput="onInput" />
+    </view>
+    <view class="field">
+      <view class="label">备注</view>
+      <textarea class="textarea note-textarea" value="{{form.note}}" data-field="form.note" placeholder="例如：排队久、适合四个人、辣度可选" bindinput="onInput" />
+    </view>
+  </view>
+
+  <view class="section enable-card">
+    <view>
+      <view class="enable-title">参与抽签</view>
+      <view class="enable-copy">关闭后餐厅仍保留在池中，但不会进入候选。</view>
+    </view>
+    <switch checked="{{!form.disabled}}" bindchange="onEnabledChange" />
+  </view>
+
+  <view wx:if="{{restaurantId}}" class="section danger-card">
+    <view>
+      <view class="danger-title">删除餐厅</view>
+      <view class="danger-copy">用于删掉录入错误的餐厅。历史记录里的已确认结果不会被删除。</view>
+    </view>
+    <button class="danger-button" loading="{{deleting}}" disabled="{{deleting || saving}}" bindtap="deleteRestaurant">删除</button>
+  </view>
+  <button class="save-rail" loading="{{saving}}" disabled="{{saving || deleting}}" bindtap="save">保存餐厅</button>
+</view>

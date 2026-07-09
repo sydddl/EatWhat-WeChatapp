@@ -1,0 +1,149 @@
+page {
+  min-height: 100vh;
+  background: #fdfdfb;
+  color: #151515;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+}
+
+button {
+  padding: 0;
+  margin: 0;
+}
+
+button::after {
+  border: 0;
+}
+
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 34rpx 30rpx 56rpx;
+  background: #fdfdfb;
+}
+
+.section {
+  margin-bottom: 28rpx;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1rpx solid rgba(21, 21, 21, 0.07);
+  border-radius: 22rpx;
+  padding: 30rpx;
+  box-shadow: 0 22rpx 60rpx rgba(21, 21, 21, 0.055);
+}
+
+.title {
+  color: #151515;
+  font-size: 46rpx;
+  font-weight: 900;
+  line-height: 1.16;
+  letter-spacing: 0;
+}
+
+.subtitle,
+.muted {
+  color: rgba(21, 21, 21, 0.58);
+  font-size: 26rpx;
+  line-height: 1.62;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.button {
+  height: 88rpx;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  font-weight: 800;
+  line-height: 88rpx;
+  letter-spacing: 0;
+}
+
+.button.primary {
+  background: #151515;
+  color: #ffffff;
+  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.24), 0 16rpx 34rpx rgba(21, 21, 21, 0.16);
+}
+
+.button.secondary {
+  background: #ffffff;
+  color: #151515;
+  border: 1rpx solid rgba(21, 21, 21, 0.09);
+}
+
+.button.danger {
+  background: rgba(127, 58, 239, 0.12);
+  color: #151515;
+  border: 1rpx solid rgba(127, 58, 239, 0.28);
+}
+
+.field {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.label {
+  color: rgba(21, 21, 21, 0.74);
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.input,
+.textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1rpx solid rgba(21, 21, 21, 0.12);
+  border-radius: 14rpx;
+  background: #ffffff;
+  color: #151515;
+  font-size: 28rpx;
+  padding: 18rpx 20rpx;
+}
+
+.input {
+  height: 88rpx;
+  min-height: 88rpx;
+  line-height: 52rpx;
+}
+
+.textarea {
+  min-height: 168rpx;
+  height: 168rpx;
+  line-height: 1.5;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42rpx;
+  border-radius: 6rpx;
+  background: rgba(21, 21, 21, 0.055);
+  color: rgba(21, 21, 21, 0.72);
+  font-size: 23rpx;
+  font-weight: 650;
+  padding: 0 14rpx;
+  margin: 8rpx 8rpx 0 0;
+}
+
+.empty {
+  color: rgba(21, 21, 21, 0.52);
+  font-size: 28rpx;
+  text-align: center;
+  padding: 56rpx 24rpx;
+}

@@ -1,0 +1,27 @@
+<view class="page">
+  <view class="section">
+    <view class="title">餐厅池迁移</view>
+    <view class="subtitle">把当前小组的餐厅池导出成 JSON，再粘贴到另一个小组导入。默认追加导入，并跳过同名同地址的重复餐厅。</view>
+  </view>
+
+  <view class="section panel stack">
+    <view class="heading">导出当前餐厅池</view>
+    <view class="muted">当前 groupId: {{groupId}}</view>
+    <button class="button primary" loading="{{exporting}}" bindtap="exportPool">导出并复制</button>
+    <textarea class="textarea transfer-text" value="{{exportText}}" placeholder="导出的餐厅池 JSON 会显示在这里" />
+  </view>
+
+  <view class="section panel stack">
+    <view class="heading">导入到当前小组</view>
+    <view class="muted">先切换/加入目标小组，再把 JSON 粘贴到这里导入。</view>
+    <button class="button secondary" bindtap="pasteFromClipboard">从剪贴板粘贴</button>
+    <textarea class="textarea transfer-text" value="{{importText}}" placeholder="粘贴 EatWhatRestaurantPool JSON" bindinput="onImportTextInput" />
+    <button class="button primary" loading="{{importing}}" bindtap="importPool">导入餐厅池</button>
+  </view>
+
+  <view wx:if="{{lastResult}}" class="section panel result-card">
+    <view class="heading">导入结果</view>
+    <view class="body">导入 {{lastResult.imported}} 家，跳过 {{lastResult.skipped}} 家，共读取 {{lastResult.total}} 家。</view>
+    <view wx:if="{{lastResult.skippedNames.length > 0}}" class="muted">跳过示例：{{lastResult.skippedNamesText}}</view>
+  </view>
+</view>

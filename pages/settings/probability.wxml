@@ -1,0 +1,111 @@
+<view class="page probability-page">
+  <view class="section control-hero">
+    <view class="hero-mark mark-a"></view>
+    <view class="hero-mark mark-b"></view>
+    <view class="hero-copy">
+      <view class="eyebrow">WILL CONTROL</view>
+      <view class="title">{{copy.title}}</view>
+      <view class="subtitle">{{copy.subtitle}}</view>
+    </view>
+    <view class="hero-badge">SOFTMAX</view>
+  </view>
+
+  <view class="section panel control-panel">
+    <view class="panel-head">
+      <view>
+        <view class="panel-title">{{copy.deltaTitle}}</view>
+        <view class="panel-caption">{{copy.deltaCaption}}</view>
+      </view>
+    </view>
+
+    <view class="delta-card boost-card">
+      <view class="delta-main">
+        <view class="delta-label">{{copy.plusLabel}}</view>
+        <view class="hint">{{copy.plusHint}}</view>
+      </view>
+      <view class="value-box">
+        <input class="value-input" type="text" value="{{form.preferencePlusPercent}}" data-field="preferencePlusPercent" bindinput="onInput" />
+        <text>%</text>
+      </view>
+    </view>
+
+    <view class="delta-card minus-card">
+      <view class="delta-main">
+        <view class="delta-label">{{copy.minusLabel}}</view>
+        <view class="hint">{{copy.minusHint}}</view>
+      </view>
+      <view class="value-box">
+        <input class="value-input" type="text" value="{{form.preferenceMinusPercent}}" data-field="preferenceMinusPercent" bindinput="onInput" />
+        <text>%</text>
+      </view>
+    </view>
+
+    <view class="delta-card penalty-card">
+      <view class="delta-main">
+        <view class="delta-label">{{copy.eatenLabel}}</view>
+        <view class="hint">{{copy.eatenHint}}</view>
+      </view>
+      <view class="value-box">
+        <input class="value-input" type="text" value="{{form.eatenPenaltyPercent}}" data-field="eatenPenaltyPercent" bindinput="onInput" />
+        <text>%</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section rule-grid">
+    <view class="rule-card">
+      <view class="rule-label">{{copy.eatenWindow}}</view>
+      <view class="rule-value-row">
+        <input class="rule-input" type="number" value="{{form.eatenWithinDays}}" data-field="eatenWithinDays" bindinput="onInput" />
+        <text>{{copy.dayUnit}}</text>
+      </view>
+      <view class="hint">{{copy.eatenWindowHint}}</view>
+    </view>
+    <view class="rule-card dark-rule">
+      <view class="rule-label">{{copy.temperature}}</view>
+      <view class="rule-value-row">
+        <input class="rule-input" type="text" value="{{form.softmaxTemperature}}" data-field="softmaxTemperature" bindinput="onInput" />
+      </view>
+      <view class="hint">{{copy.temperatureHint}}</view>
+    </view>
+  </view>
+
+  <view class="section panel preview-panel">
+    <view class="panel-head">
+      <view>
+        <view class="panel-title">{{copy.previewTitle}}</view>
+        <view class="panel-caption">{{copy.previewCaption}}</view>
+      </view>
+    </view>
+    <scroll-view scroll-x class="preview-scroll">
+      <view class="preview-table">
+        <view class="preview-row preview-head">
+          <view class="preview-cell count-cell">{{copy.count}}</view>
+          <view class="preview-cell">{{copy.noChange}}</view>
+          <view class="preview-cell accent">{{previewLabels.plus}}</view>
+          <view class="preview-cell danger">{{previewLabels.eaten}}</view>
+        </view>
+        <view class="preview-row" wx:for="{{previewRows}}" wx:key="count">
+          <view class="preview-cell count-cell">{{item.count}}</view>
+          <view class="preview-cell">{{item.base}}</view>
+          <view class="preview-cell accent">{{item.plus}}</view>
+          <view class="preview-cell danger">{{item.eaten}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="section panel formula-panel">
+    <view class="panel-head">
+      <view>
+        <view class="panel-title">{{copy.formulaTitle}}</view>
+        <view class="panel-caption">{{copy.formulaCaption}}</view>
+      </view>
+      <view class="formula-chip">Pi</view>
+    </view>
+    <view class="formula-line">score_i = ln(baseWeight_i) + sum(delta_i)</view>
+    <view class="formula-line">P_i = exp(score_i / T) / sum(exp(score_j / T))</view>
+  </view>
+
+  <button class="save-rail" loading="{{saving}}" bindtap="save">{{copy.save}}</button>
+</view>

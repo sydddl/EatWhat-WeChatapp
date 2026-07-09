@@ -1,0 +1,32 @@
+<view class="page members-page">
+  <view class="section members-hero">
+    <view class="hero-mark mark-a"></view>
+    <view class="hero-mark mark-b"></view>
+    <view class="hero-copy">
+      <view class="eyebrow">CREW</view>
+      <view class="title">组成员</view>
+      <view class="subtitle">{{groupName}} · {{memberCount}} 人</view>
+    </view>
+    <view class="hero-count">{{memberCount}}</view>
+  </view>
+
+  <view class="section profile-card">
+    <view class="panel-title">我的资料</view>
+    <view class="profile-actions">
+      <button class="profile-button" open-type="chooseAvatar" loading="{{savingProfile}}" bindchooseavatar="onChooseAvatar">设置头像</button>
+      <view class="nickname-row">
+        <input class="nickname-input" type="nickname" value="{{nickname}}" placeholder="填写昵称" bindinput="onNicknameInput" />
+        <button class="nickname-button" loading="{{savingProfile}}" bindtap="saveNickname">保存</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">正在加载成员...</view>
+  <view wx:else class="section member-grid">
+    <view wx:for="{{members}}" wx:key="index" class="member-card">
+      <image wx:if="{{item.avatarUrl}}" class="member-avatar" src="{{item.avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="member-avatar fallback">{{item.fallbackText}}</view>
+      <view class="member-name">{{item.nickname || '未设置昵称'}}</view>
+    </view>
+  </view>
+</view>

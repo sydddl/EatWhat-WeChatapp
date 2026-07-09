@@ -1,0 +1,22 @@
+{
+    "pages":  [
+                  "pages/index/index",
+                  "pages/members/list",
+                  "pages/restaurants/list",
+                  "pages/restaurants/form",
+                  "pages/draw/draw",
+                  "pages/history/history",
+                  "pages/docs/readme",
+                  "pages/settings/probability",
+                  "pages/settings/pool_transfer"
+              ],
+    "window":  {
+                   "navigationBarTitleText":  "吃什么抽签",
+                   "navigationBarBackgroundColor":  "#ffffff",
+                   "navigationBarTextStyle":  "black",
+                   "backgroundColor":  "#fdfdfb"
+               },
+    "style":  "v2",
+    "sitemapLocation":  "sitemap.json",
+    "lazyCodeLoading":  "requiredComponents"
+}

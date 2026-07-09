@@ -1,0 +1,24 @@
+{
+    "libVersion":  "3.16.2",
+    "projectname":  "%E6%98%AF%E5%95%8A%E5%90%83%E4%BB%80%E4%B9%88",
+    "setting":  {
+                    "urlCheck":  true,
+                    "coverView":  true,
+                    "lazyloadPlaceholderEnable":  false,
+                    "skylineRenderEnable":  false,
+                    "preloadBackgroundData":  false,
+                    "autoAudits":  false,
+                    "showShadowRootInWxmlPanel":  true,
+                    "compileHotReLoad":  true
+                },
+    "cloudfunctionRoot":  "cloudfunctions/",
+    "cloudfunctionEnv":  "cloudbase-d5gdwhmua3714cd82",
+    "cloudbaseEnv":  "cloudbase-d5gdwhmua3714cd82",
+    "envList":  [
+                    {
+                        "envId":  "cloudbase-d5gdwhmua3714cd82",
+                        "alias":  "default",
+                        "isDefault":  true
+                    }
+                ]
+}

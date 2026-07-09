@@ -1,0 +1,56 @@
+<view class="page restaurant-page">
+  <view class="section list-head">
+    <view class="eyebrow">FOOD POOL</view>
+    <view class="title">餐厅池</view>
+    <view class="subtitle">共 {{restaurants.length}} 家，右侧圆球表示正在参与抽签。</view>
+  </view>
+
+  <view class="section token-dock">
+    <view class="token-tray plus-tray">
+      <view wx:for="{{plusTokenSlots}}" wx:key="key" class="hex-coin plus-coin {{item.className}}" data-type="{{item.type}}" data-key="{{item.key}}" data-available="{{item.available}}" catchtap="selectToken"><text>{{item.mark}}</text></view>
+    </view>
+    <view class="token-tray minus-tray">
+      <view wx:for="{{minusTokenSlots}}" wx:key="key" class="hex-coin minus-coin {{item.className}}" data-type="{{item.type}}" data-key="{{item.key}}" data-available="{{item.available}}" catchtap="selectToken"><text>{{item.mark}}</text></view>
+    </view>
+  </view>
+
+  <view class="section stack">
+    <button class="button primary" bindtap="goAdd">添加餐厅</button>
+    <button class="button secondary" bindtap="goPoolTransfer">导入/导出餐厅池</button>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">正在加载...</view>
+  <view wx:elif="{{restaurants.length === 0}}" class="empty">还没有餐厅，先添加一家。</view>
+
+  <view wx:for="{{restaurants}}" wx:key="_id" class="restaurant-card {{item.disabled ? 'is-disabled' : 'is-enabled'}} {{selectedTokenType ? 'is-placing' : ''}}" data-id="{{item._id}}" data-disabled="{{item.disabled}}" bindtap="handleCardTap">
+    <view class="orb-socket"></view>
+    <view class="enable-orb" data-id="{{item._id}}" data-disabled="{{item.disabled}}" catchtap="toggleEnabled">
+      <view class="orb-shine"></view>
+      <view class="orb-mark">{{item.disabled ? '' : '×'}}</view>
+    </view>
+    <view class="restaurant-main">
+      <view class="name {{item.disabled ? 'disabled' : ''}}">{{item.name}}</view>
+      <view class="muted address">{{item.address || '未填写地址'}}</view>
+      <view class="meta">
+        <text class="chip price-chip">{{item.priceRange || '不限价位'}}</text>
+        <text class="chip weight-chip">权重 {{item.baseWeight}}</text>
+        <text wx:for="{{item.tagChips}}" wx:for-item="tag" wx:key="key" class="chip tag-chip {{tag.className}}">{{tag.label}}</text>
+      </view>
+    </view>
+    <view class="card-footer">
+      <view class="card-medal-zone">
+        <view wx:if="{{item.myTokenBadges.length > 0}}" class="card-medal-rack my-medals">
+          <view wx:for="{{item.myTokenBadges}}" wx:key="key" class="card-medal medal-{{item.type}} is-mine" data-id="{{item.restaurantId}}" catchtap="removePreferenceToken">
+            <view class="medal-hex"><text>{{item.mark}}</text></view>
+          </view>
+        </view>
+        <view wx:if="{{item.otherTokenBadges.length > 0}}" class="card-medal-rack other-medals">
+          <view wx:for="{{item.otherTokenBadges}}" wx:key="key" class="card-medal medal-{{item.type}}" data-id="" catchtap="removePreferenceToken">
+            <view class="medal-hex"><text>{{item.mark}}</text></view>
+          </view>
+        </view>
+      </view>
+      <button class="mini" data-id="{{item._id}}" catchtap="goEdit">编辑</button>
+    </view>
+  </view>
+</view>
