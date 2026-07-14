@@ -1,4 +1,5 @@
 import { buildSharePath, requireGroup } from '../../utils/group';
+import { distanceMeters, formatDistance, normalizeLocation, openLocation } from '../../utils/location';
 
 type TokenType = 'plus' | 'minus';
 
@@ -60,11 +61,16 @@ function buildTagChips(tags: string[] = []) {
     });
 }
 
-function decorateRestaurants(restaurants: any[]) {
+function decorateRestaurants(restaurants: any[], defaultOrigin: any = null) {
+  const origin = normalizeLocation(defaultOrigin);
   return (restaurants || []).map((restaurant) => {
     const tokenGroups = buildTokenBadges(restaurant);
+    const location = normalizeLocation(restaurant.location);
     return {
       ...restaurant,
+      location,
+      hasLocation: Boolean(location),
+      distanceText: formatDistance(distanceMeters(origin, location)),
       tagChips: buildTagChips(restaurant.tags || []),
       tokenBadges: tokenGroups.allBadges,
       myTokenBadges: tokenGroups.myBadges,
@@ -72,6 +78,25 @@ function decorateRestaurants(restaurants: any[]) {
       hasTokenBadges: tokenGroups.allBadges.length > 0
     };
   });
+}
+
+async function updateRestaurantsIndividually(groupId: string, restaurants: any[], disabled: boolean) {
+  const batchSize = 6;
+  for (let index = 0; index < restaurants.length; index += batchSize) {
+    const batch = restaurants.slice(index, index + batchSize);
+    await Promise.all(batch.map((restaurant: any) => wx.cloud.callFunction({
+      name: 'addRestaurant',
+      data: { groupId, restaurantId: restaurant._id, disabled }
+    })));
+  }
+}
+
+function bulkErrorMessage(error: any): string {
+  const message = String(error?.errMsg || error?.message || error || '未知错误');
+  if (/-501000|function.*not found|not found.*function|FunctionName/i.test(message)) {
+    return '云端未找到 addRestaurant。请在微信开发者工具中重新部署该云函数。';
+  }
+  return message.length > 180 ? `${message.slice(0, 180)}...` : message;
 }
 
 Page({
@@ -84,6 +109,8 @@ Page({
     minusTokenSlots: buildTokenSlots('minus', TOKEN_LIMIT, ''),
     selectedTokenType: '' as TokenType | '',
     selectedTokenKey: '',
+    defaultOrigin: null as any,
+    bulkUpdating: false,
     loading: true
   },
 
@@ -112,11 +139,15 @@ Page({
   async loadRestaurants() {
     this.setData({ loading: true });
     try {
-      const result = await wx.cloud.callFunction({ name: 'listRestaurants', data: { groupId: this.data.groupId, includeDisabled: true } });
-      const restaurants = decorateRestaurants((result.result as any)?.restaurants || []);
+      const [result, originResult] = await Promise.all([
+        wx.cloud.callFunction({ name: 'listRestaurants', data: { groupId: this.data.groupId, includeDisabled: true } }),
+        wx.cloud.callFunction({ name: 'groupLocation', data: { groupId: this.data.groupId, action: 'get' } }).catch(() => null)
+      ]);
+      const defaultOrigin = normalizeLocation((originResult?.result as any)?.defaultOrigin);
+      const restaurants = decorateRestaurants((result.result as any)?.restaurants || [], defaultOrigin);
       const plusLeft = Math.max(0, TOKEN_LIMIT - countMine(restaurants, 'plus'));
       const minusLeft = Math.max(0, TOKEN_LIMIT - countMine(restaurants, 'minus'));
-      this.setData({ restaurants, plusLeft, minusLeft });
+      this.setData({ restaurants, plusLeft, minusLeft, defaultOrigin });
       this.syncTokenSlots(plusLeft, minusLeft);
     } finally {
       this.setData({ loading: false });
@@ -127,6 +158,10 @@ Page({
     wx.navigateTo({ url: '/pages/restaurants/form?groupId=' + this.data.groupId });
   },
 
+  goNearby() {
+    wx.navigateTo({ url: '/pages/restaurants/nearby?groupId=' + this.data.groupId });
+  },
+
   goPoolTransfer() {
     wx.navigateTo({ url: '/pages/settings/pool_transfer?groupId=' + this.data.groupId });
   },
@@ -134,6 +169,12 @@ Page({
   goEdit(event: any) {
     const id = event.currentTarget.dataset.id;
     wx.navigateTo({ url: '/pages/restaurants/form?groupId=' + this.data.groupId + '&id=' + id });
+  },
+
+  openRestaurantLocation(event: any) {
+    const id = event.currentTarget.dataset.id;
+    const restaurant = this.data.restaurants.find((item: any) => item._id === id);
+    if (restaurant?.location) openLocation(restaurant.location);
   },
 
   selectToken(event: any) {
@@ -153,6 +194,39 @@ Page({
     if (!restaurantId) return;
     await wx.cloud.callFunction({ name: 'addRestaurant', data: { groupId: this.data.groupId, restaurantId, disabled } });
     await this.loadRestaurants();
+  },
+
+  async setAllRestaurantsDisabled(event: any) {
+    if (this.data.bulkUpdating || this.data.restaurants.length === 0) return;
+    const rawDisabled = event.currentTarget.dataset.disabled;
+    const disabled = rawDisabled === true || rawDisabled === 'true';
+    this.setData({ bulkUpdating: true });
+    try {
+      try {
+        await wx.cloud.callFunction({
+          name: 'addRestaurant',
+          data: { groupId: this.data.groupId, action: 'setAllDisabled', disabled }
+        });
+        await this.loadRestaurants();
+        const applied = this.data.restaurants.every((restaurant: any) => Boolean(restaurant.disabled) === disabled);
+        if (!applied) throw new Error('batch update did not apply');
+      } catch (batchError) {
+        console.warn('Batch restaurant update failed, using compatibility fallback.', batchError);
+        await updateRestaurantsIndividually(this.data.groupId, this.data.restaurants, disabled);
+        await this.loadRestaurants();
+      }
+      wx.showToast({ title: disabled ? '已全部停用' : '已全部启用', icon: 'none' });
+    } catch (error) {
+      console.error('批量更新失败', error);
+      wx.showModal({
+        title: '批量更新失败',
+        content: bulkErrorMessage(error),
+        showCancel: false,
+        confirmText: '知道了'
+      });
+    } finally {
+      this.setData({ bulkUpdating: false });
+    }
   },
 
   async handleCardTap(event: any) {

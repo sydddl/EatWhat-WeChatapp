@@ -261,6 +261,7 @@
   font-weight: 700;
   line-height: 62rpx;
 }
+
 .history-groups {
   position: relative;
   z-index: 2;

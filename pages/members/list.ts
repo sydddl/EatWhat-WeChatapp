@@ -40,6 +40,7 @@ Page({
   data: {
     groupId: '',
     groupName: '固定饭搭子小组',
+    defaultOriginName: '',
     memberCount: 0,
     members: [] as MemberItem[],
     nickname: '',
@@ -67,6 +68,7 @@ Page({
       const members = decorateMembers(resolvedMembers);
       this.setData({
         groupName: group.name || this.data.groupName,
+        defaultOriginName: group.defaultOrigin?.name || group.defaultOrigin?.address || '',
         memberCount: payload.memberCount || group.memberCount || members.length,
         members
       });
@@ -77,6 +79,10 @@ Page({
 
   onNicknameInput(event: any) {
     this.setData({ nickname: event.detail.value });
+  },
+
+  goGroupLocation() {
+    wx.navigateTo({ url: `/pages/settings/group_location?groupId=${this.data.groupId}` });
   },
 
   async onChooseAvatar(event: any) {

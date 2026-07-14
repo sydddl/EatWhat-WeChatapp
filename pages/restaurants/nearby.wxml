@@ -1,0 +1,120 @@
+<view class="nearby-page">
+  <view class="origin-bar">
+    <view class="origin-copy">
+      <text class="origin-label">群组出发点</text>
+      <text class="origin-name">{{originTitle || '尚未设置'}}</text>
+    </view>
+    <button class="origin-action" bindtap="goGroupLocation">更改</button>
+  </view>
+
+  <view wx:if="{{originLoading}}" class="loading-state origin-loading">正在读取群组出发点...</view>
+
+  <view wx:elif="{{noOrigin}}" class="empty-state">
+    <text class="empty-title">还没有群组默认出发点</text>
+    <button class="button primary" bindtap="goGroupLocation">设置出发点</button>
+  </view>
+
+  <block wx:elif="{{origin}}">
+    <view class="map-band">
+      <map
+        class="nearby-map"
+        latitude="{{origin.latitude}}"
+        longitude="{{origin.longitude}}"
+        scale="{{mapScale}}"
+        circles="{{circles}}"
+        enable-poi="{{true}}"
+        bindpoitap="onPoiTap"
+      ></map>
+      <view class="map-overlay">
+        <text class="map-kicker">MAP PICKER</text>
+        <text class="map-hint">点地图 POI，或搜索附近餐厅后批量加入</text>
+      </view>
+    </view>
+
+    <view class="search-band">
+      <view class="search-title-row">
+        <text class="search-kicker">NEARBY SEARCH</text>
+        <text class="search-hint">范围越小，结果越贴近出发点</text>
+      </view>
+      <view class="search-row">
+        <input
+          class="search-input"
+          value="{{keyword}}"
+          placeholder="餐厅、火锅、咖啡..."
+          confirm-type="search"
+          bindinput="onKeywordInput"
+          bindconfirm="submitSearch"
+        />
+        <button class="search-button" loading="{{searching}}" disabled="{{searching}}" bindtap="submitSearch">搜索</button>
+      </view>
+      <view class="radius-control">
+        <button
+          wx:for="{{radiusOptions}}"
+          wx:key="value"
+          class="radius-option {{radius === item.value ? 'is-active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="chooseRadius"
+        >{{item.label}}</button>
+      </view>
+      <view class="quota-notice">
+        <text class="quota-notice-label">额度说明</text>
+        <text class="quota-notice-text">当前使用个人开发者腾讯位置服务，地点搜索每日调用量有限。</text>
+      </view>
+    </view>
+
+    <view class="result-toolbar">
+      <view class="result-copy">
+        <view class="result-count">附近 {{totalCount}} 个结果</view>
+        <view class="result-subtitle">点击卡片选择，已选餐厅会保留到导入前</view>
+      </view>
+      <view class="selection-actions">
+        <button class="text-action" bindtap="selectAllVisible">全选当前</button>
+        <button class="text-action muted-action" bindtap="clearSelection">清空</button>
+      </view>
+    </view>
+
+    <view wx:if="{{searchError}}" class="error-strip {{quotaExceeded ? 'quota-error' : ''}}">{{searchError}}</view>
+    <view wx:if="{{searching && places.length === 0}}" class="loading-state">正在搜索附近餐厅...</view>
+    <view wx:elif="{{!searching && places.length === 0}}" class="loading-state">当前范围没有搜索结果</view>
+
+    <view class="place-list">
+      <view
+        wx:for="{{places}}"
+        wx:key="id"
+        class="place-row {{item.selected ? 'is-selected' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="togglePlace"
+      >
+        <view class="selection-dot"><text>{{item.selected ? '✓' : ''}}</text></view>
+        <view class="place-main">
+          <view class="place-title-line">
+            <text class="place-title">{{item.title}}</text>
+            <text class="place-distance">{{item.distanceText}}</text>
+          </view>
+          <text class="place-address">{{item.address || '地图地点'}}</text>
+          <view class="place-meta">
+            <text wx:if="{{item.category}}" class="category-chip">{{item.category}}</text>
+            <text wx:if="{{item.fromMap}}" class="map-chip">地图点选</text>
+          </view>
+        </view>
+        <view class="place-action">{{item.selected ? '已选' : '选择'}}</view>
+      </view>
+    </view>
+
+    <button wx:if="{{hasMore}}" class="load-more" loading="{{searching}}" disabled="{{searching}}" bindtap="loadMore">加载更多</button>
+    <view class="footer-spacer"></view>
+  </block>
+</view>
+
+<view wx:if="{{!noOrigin && origin}}" class="import-footer">
+  <view class="selected-summary">
+    <text class="selected-number">{{selectedCount}}</text>
+    <text class="selected-label">家已选</text>
+  </view>
+  <button
+    class="import-button {{selectedCount === 0 ? 'is-disabled' : ''}}"
+    loading="{{importing}}"
+    disabled="{{selectedCount === 0 || importing}}"
+    bindtap="importSelected"
+  >批量添加到餐厅池</button>
+</view>

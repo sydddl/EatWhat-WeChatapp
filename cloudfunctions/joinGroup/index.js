@@ -12,6 +12,53 @@ function publicMember(member) {
   };
 }
 
+function memberIdentity(member) {
+  return member.openid || member._openid || member._id;
+}
+
+function dedupeMembers(members) {
+  const unique = new Map();
+  for (const member of members || []) {
+    const key = memberIdentity(member);
+    const current = unique.get(key);
+    if (!current) {
+      unique.set(key, member);
+      continue;
+    }
+    unique.set(key, {
+      ...current,
+      ...member,
+      avatarUrl: member.avatarUrl || current.avatarUrl || '',
+      nickname: member.nickname || current.nickname || ''
+    });
+  }
+  return Array.from(unique.values());
+}
+
+async function resolveAvatarUrls(members) {
+  const fileIDs = Array.from(new Set((members || [])
+    .map((member) => member.avatarUrl || '')
+    .filter((url) => url.startsWith('cloud://'))));
+  if (fileIDs.length === 0) return members;
+
+  const urlMap = new Map();
+  try {
+    for (let index = 0; index < fileIDs.length; index += 50) {
+      const response = await cloud.getTempFileURL({ fileList: fileIDs.slice(index, index + 50) });
+      for (const item of response.fileList || []) {
+        urlMap.set(item.fileID, item.tempFileURL || '');
+      }
+    }
+  } catch (error) {
+    console.error('Failed to resolve member avatar URLs.', error);
+  }
+
+  return members.map((member) => {
+    const avatarUrl = member.avatarUrl || '';
+    return avatarUrl.startsWith('cloud://') ? { ...member, avatarUrl: urlMap.get(avatarUrl) || '' } : member;
+  });
+}
+
 exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext();
   const groupId = String(event.groupId || '').trim();
@@ -20,9 +67,10 @@ exports.main = async (event) => {
   const group = await db.collection('groups').doc(groupId).get();
   if (!group.data) throw new Error('group not found');
 
-  const existing = await db.collection('members').where({ groupId, openid: OPENID }).limit(1).get();
+  const beforeResult = await db.collection('members').where({ groupId }).limit(100).get();
+  const existing = (beforeResult.data || []).find((member) => member.openid === OPENID || member._openid === OPENID);
   const now = db.serverDate();
-  if (existing.data.length === 0) {
+  if (!existing) {
     await db.collection('members').add({
       data: {
         groupId,
@@ -33,21 +81,19 @@ exports.main = async (event) => {
         updatedAt: now
       }
     });
-  } else if (event.nickname || event.avatarUrl) {
-    const updateData = { updatedAt: now };
+  } else if (event.nickname || event.avatarUrl || !existing.openid) {
+    const updateData = { openid: OPENID, updatedAt: now };
     if (event.nickname) updateData.nickname = event.nickname;
     if (event.avatarUrl) updateData.avatarUrl = event.avatarUrl;
-    await db.collection('members').doc(existing.data[0]._id).update({ data: updateData });
+    await db.collection('members').doc(existing._id).update({ data: updateData });
   }
 
-  const countResult = await db.collection('members').where({ groupId }).count();
-  const memberCount = countResult.total || 0;
+  const membersResult = await db.collection('members').where({ groupId }).limit(100).get();
+  const members = dedupeMembers(membersResult.data || []);
+  const memberCount = members.length;
   await db.collection('groups').doc(groupId).update({ data: { memberCount, updatedAt: now } });
 
-  const members = await db.collection('members')
-    .where({ groupId })
-    .limit(20)
-    .get();
+  const resolvedMembers = await resolveAvatarUrls(members);
   const freshGroup = await db.collection('groups').doc(groupId).get();
 
   return {
@@ -55,6 +101,6 @@ exports.main = async (event) => {
     joined: true,
     memberCount,
     group: { ...freshGroup.data, memberCount },
-    members: members.data.map(publicMember)
+    members: resolvedMembers.map(publicMember)
   };
 };

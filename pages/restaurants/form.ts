@@ -1,7 +1,8 @@
 import { buildSharePath, requireGroup } from '../../utils/group';
 import { parseDianpingShareText } from '../../utils/dianping';
+import { LocationPoint, normalizeLocation, openLocation as openMapLocation } from '../../utils/location';
 
-const emptyForm = { name: '', address: '', priceRange: '', tags: [] as string[], baseWeight: 1, sourceUrl: '', note: '', disabled: false };
+const emptyForm = { name: '', address: '', priceRange: '', tags: [] as string[], baseWeight: 1, sourceUrl: '', note: '', disabled: false, location: null as LocationPoint | null };
 
 function safeBack(groupId: string) {
   const pages = getCurrentPages();
@@ -22,7 +23,7 @@ Page({
   async loadRestaurant(id: string) {
     const result = await wx.cloud.database().collection('restaurants').doc(id).get();
     const data = result.data || {};
-    const form = { ...emptyForm, ...data, baseWeight: data.baseWeight || 1 };
+    const form = { ...emptyForm, ...data, baseWeight: data.baseWeight || 1, location: normalizeLocation(data.location) };
     this.setData({ form, tagsText: (form.tags || []).join(', ') });
   },
   onShareTextInput(event: any) { this.setData({ shareText: event.detail.value }); },
@@ -42,6 +43,31 @@ Page({
     this.setData({ tagsText, 'form.tags': tags });
   },
   onEnabledChange(event: any) { this.setData({ 'form.disabled': !event.detail.value }); },
+  async chooseRestaurantLocation() {
+    try {
+      const result = await wx.chooseLocation();
+      const location = normalizeLocation(result);
+      if (!location) return;
+      const patch: Record<string, unknown> = { 'form.location': location };
+      if (!this.data.form.address) patch['form.address'] = location.address || location.name;
+      this.setData(patch);
+    } catch (error) {
+      const message = String((error as any)?.errMsg || '');
+      if (message.includes('cancel')) return;
+      wx.showModal({
+        title: '无法打开地图选点',
+        content: message.includes('auth deny') || message.includes('authorize')
+          ? '请在小程序设置中允许位置信息权限后重试。'
+          : '请检查定位服务和网络状态后重试。',
+        confirmText: '打开设置',
+        success: (result: any) => { if (result.confirm) wx.openSetting(); }
+      });
+    }
+  },
+  previewRestaurantLocation() {
+    if (this.data.form.location) openMapLocation(this.data.form.location);
+  },
+  clearRestaurantLocation() { this.setData({ 'form.location': null }); },
   async save() {
     if (this.data.saving) return;
     if (!this.data.form.name.trim()) { wx.showToast({ title: '请填写店名', icon: 'none' }); return; }

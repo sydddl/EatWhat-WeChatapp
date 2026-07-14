@@ -4,10 +4,19 @@
     <view class="hero-mark mark-b"></view>
     <view class="hero-copy">
       <view class="eyebrow">CREW</view>
-      <view class="title">组成员</view>
+      <view class="title">群组设置</view>
       <view class="subtitle">{{groupName}} · {{memberCount}} 人</view>
     </view>
     <view class="hero-count">{{memberCount}}</view>
+  </view>
+
+  <view class="section group-setting-card">
+    <view class="group-setting-copy">
+      <view class="panel-title">默认出发点</view>
+      <view class="setting-value">{{defaultOriginName || '尚未设置'}}</view>
+      <view class="setting-hint">餐厅池会按这个共同出发位置计算距离。</view>
+    </view>
+    <button class="setting-button" bindtap="goGroupLocation">{{defaultOriginName ? '修改' : '设置'}}</button>
   </view>
 
   <view class="section profile-card">

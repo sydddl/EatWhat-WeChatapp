@@ -16,7 +16,12 @@
 
   <view class="section stack">
     <button class="button primary" bindtap="goAdd">添加餐厅</button>
+    <button class="button secondary" bindtap="goNearby">地图批量添加</button>
     <button class="button secondary" bindtap="goPoolTransfer">导入/导出餐厅池</button>
+    <view class="bulk-actions">
+      <button class="bulk-button enable-all {{bulkUpdating || restaurants.length === 0 ? 'is-disabled' : ''}}" data-disabled="{{false}}" loading="{{bulkUpdating}}" disabled="{{bulkUpdating || restaurants.length === 0}}" bindtap="setAllRestaurantsDisabled">全部启用</button>
+      <button class="bulk-button disable-all {{bulkUpdating || restaurants.length === 0 ? 'is-disabled' : ''}}" data-disabled="{{true}}" disabled="{{bulkUpdating || restaurants.length === 0}}" bindtap="setAllRestaurantsDisabled">全部停用</button>
+    </view>
   </view>
 
   <view wx:if="{{loading}}" class="empty">正在加载...</view>
@@ -30,7 +35,11 @@
     </view>
     <view class="restaurant-main">
       <view class="name {{item.disabled ? 'disabled' : ''}}">{{item.name}}</view>
-      <view class="muted address">{{item.address || '未填写地址'}}</view>
+      <view class="address-row">
+        <view class="muted address">{{item.address || '未填写地址'}}</view>
+        <view wx:if="{{item.distanceText}}" class="distance-text">{{item.distanceText}}</view>
+        <button wx:if="{{item.hasLocation}}" class="navigate-link" data-id="{{item._id}}" catchtap="openRestaurantLocation">导航</button>
+      </view>
       <view class="meta">
         <text class="chip price-chip">{{item.priceRange || '不限价位'}}</text>
         <text class="chip weight-chip">权重 {{item.baseWeight}}</text>

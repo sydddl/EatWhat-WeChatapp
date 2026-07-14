@@ -10,6 +10,30 @@ const DEFAULT_CONFIG = {
   softmaxTemperature: 1
 };
 
+async function resolveAvatarUrls(members) {
+  const fileIDs = Array.from(new Set((members || [])
+    .map((member) => member.avatarUrl || '')
+    .filter((url) => url.startsWith('cloud://'))));
+  if (fileIDs.length === 0) return members;
+
+  const urlMap = new Map();
+  try {
+    for (let index = 0; index < fileIDs.length; index += 50) {
+      const response = await cloud.getTempFileURL({ fileList: fileIDs.slice(index, index + 50) });
+      for (const item of response.fileList || []) {
+        urlMap.set(item.fileID, item.tempFileURL || '');
+      }
+    }
+  } catch (error) {
+    console.error('Failed to resolve voter avatar URLs.', error);
+  }
+
+  return members.map((member) => {
+    const avatarUrl = member.avatarUrl || '';
+    return avatarUrl.startsWith('cloud://') ? { ...member, avatarUrl: urlMap.get(avatarUrl) || '' } : member;
+  });
+}
+
 function normalize(text) {
   return String(text || '').trim().toLowerCase();
 }
@@ -105,6 +129,7 @@ function snapshotRestaurant(restaurant, picked) {
     baseWeight: restaurant.baseWeight || 1,
     sourceUrl: restaurant.sourceUrl || '',
     note: restaurant.note || '',
+    location: restaurant.location || null,
     probabilityFactors: picked ? { ...picked.probabilityFactors, probability: picked.probability } : undefined
   };
 }
@@ -139,7 +164,8 @@ async function getSessionForAction(groupId, action, sessionId) {
 
 async function formatSession(session, openid) {
   const members = await db.collection('members').where({ groupId: session.groupId }).limit(100).get();
-  const memberMap = new Map((members.data || []).map((member) => [member.openid, member]));
+  const resolvedMembers = await resolveAvatarUrls(members.data || []);
+  const memberMap = new Map(resolvedMembers.map((member) => [member.openid || member._openid, member]));
   const votes = session.votes || [];
   const fallback = '人';
   const abstainVoters = votes.filter((vote) => vote.restaurantId === 'abstain').map((vote) => memberMap.get(vote.openid) || {});

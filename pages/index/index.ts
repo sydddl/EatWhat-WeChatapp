@@ -30,7 +30,7 @@ const COPY = {
   enabledRestaurants: '\u542f\u7528\u9910\u5385',
   members: '\u7ec4\u6210\u5458',
   memberPool: '\u4eba\u5171\u7528\u8fd9\u4e2a\u9910\u5385\u6c60',
-  memberSettings: '\u6210\u5458\u8bbe\u7f6e',
+  memberSettings: '\u7fa4\u7ec4\u8bbe\u7f6e',
   copyGroupId: '\u590d\u5236 groupId',
   switchGroup: '\u5207\u6362\u7fa4\u7ec4',
   leaveGroup: '\u9000\u51fa\u7fa4\u7ec4',

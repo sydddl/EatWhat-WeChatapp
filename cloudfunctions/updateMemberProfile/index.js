@@ -11,13 +11,14 @@ exports.main = async (event) => {
   if (!avatarUrl && !nickname) throw new Error('avatarUrl or nickname is required');
 
   const now = db.serverDate();
-  const existing = await db.collection('members').where({ groupId, openid: OPENID }).limit(1).get();
-  const data = { updatedAt: now };
+  const memberResult = await db.collection('members').where({ groupId }).limit(100).get();
+  const existing = (memberResult.data || []).find((member) => member.openid === OPENID || member._openid === OPENID);
+  const data = { openid: OPENID, updatedAt: now };
   if (avatarUrl) data.avatarUrl = avatarUrl;
   if (nickname) data.nickname = nickname;
 
-  if (existing.data.length > 0) {
-    await db.collection('members').doc(existing.data[0]._id).update({ data });
+  if (existing) {
+    await db.collection('members').doc(existing._id).update({ data });
   } else {
     await db.collection('members').add({
       data: {
@@ -31,5 +32,5 @@ exports.main = async (event) => {
     });
   }
 
-  return { updated: true };
+  return { updated: true, memberId: existing ? existing._id : '' };
 };

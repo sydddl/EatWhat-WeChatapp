@@ -1,22 +1,32 @@
 {
-    "pages":  [
-                  "pages/index/index",
-                  "pages/members/list",
-                  "pages/restaurants/list",
-                  "pages/restaurants/form",
-                  "pages/draw/draw",
-                  "pages/history/history",
-                  "pages/docs/readme",
-                  "pages/settings/probability",
-                  "pages/settings/pool_transfer"
-              ],
-    "window":  {
-                   "navigationBarTitleText":  "吃什么抽签",
-                   "navigationBarBackgroundColor":  "#ffffff",
-                   "navigationBarTextStyle":  "black",
-                   "backgroundColor":  "#fdfdfb"
-               },
-    "style":  "v2",
-    "sitemapLocation":  "sitemap.json",
-    "lazyCodeLoading":  "requiredComponents"
+  "pages": [
+    "pages/index/index",
+    "pages/members/list",
+    "pages/restaurants/list",
+    "pages/restaurants/nearby",
+    "pages/restaurants/form",
+    "pages/draw/draw",
+    "pages/history/history",
+    "pages/docs/readme",
+    "pages/settings/probability",
+    "pages/settings/group_location",
+    "pages/settings/pool_transfer"
+  ],
+  "window": {
+    "navigationBarTitleText": "吃什么抽签",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#fdfdfb"
+  },
+  "style": "v2",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于在地图中选择小组出发点和餐厅位置"
+    }
+  },
+  "requiredPrivateInfos": [
+    "chooseLocation"
+  ],
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
 }

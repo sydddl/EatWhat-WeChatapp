@@ -31,6 +31,19 @@
       <view class="label">地址</view>
       <input class="input" value="{{form.address}}" data-field="form.address" placeholder="例如 东门外 200 米 / 某商场 B1" bindinput="onInput" />
     </view>
+    <view class="field">
+      <view class="label">地图位置</view>
+      <view wx:if="{{form.location}}" class="picked-location">
+        <view class="picked-location-copy" bindtap="previewRestaurantLocation">
+          <view class="picked-location-name">{{form.location.name || '已选位置'}}</view>
+          <view class="picked-location-address">{{form.location.address || '点击在地图中查看'}}</view>
+        </view>
+        <button class="location-text-button" bindtap="chooseRestaurantLocation">重选</button>
+        <button class="location-text-button is-muted" bindtap="clearRestaurantLocation">清除</button>
+      </view>
+      <button wx:else class="location-picker-button" bindtap="chooseRestaurantLocation">在地图中选择餐厅位置</button>
+      <view class="field-hint">有精确位置后，餐厅池可显示相对出发点的距离并打开地图导航。</view>
+    </view>
     <view class="split-row">
       <view class="field split-field">
         <view class="label">价位</view>

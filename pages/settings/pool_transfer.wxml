@@ -1,7 +1,7 @@
 <view class="page">
   <view class="section">
     <view class="title">餐厅池迁移</view>
-    <view class="subtitle">把当前小组的餐厅池导出成 JSON，再粘贴到另一个小组导入。默认追加导入，并跳过同名同地址的重复餐厅。</view>
+    <view class="subtitle">把当前小组的餐厅池导出成 JSON，再粘贴到另一个小组导入。导出会保留餐厅坐标和来源组出发点；导入只追加餐厅，不覆盖目标组的出发点。</view>
   </view>
 
   <view class="section panel stack">

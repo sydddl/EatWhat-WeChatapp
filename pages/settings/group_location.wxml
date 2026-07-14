@@ -1,0 +1,29 @@
+<view class="page group-location-page">
+  <view class="section location-hero">
+    <view class="eyebrow">GROUP ORIGIN</view>
+    <view class="title">默认出发点</view>
+    <view class="subtitle">为「{{groupName || '当前小组'}}」设置共同的吃饭出发位置。这里只保存一个组级地点，不记录成员实时位置。</view>
+  </view>
+
+  <view class="section location-panel">
+    <view wx:if="{{hasOrigin}}" class="location-summary" bindtap="previewOrigin">
+      <view class="location-pin">●</view>
+      <view class="location-copy">
+        <view class="location-name">{{origin.name || '已选位置'}}</view>
+        <view class="location-address">{{origin.address || '点击在地图中查看'}}</view>
+      </view>
+      <view class="location-open">查看</view>
+    </view>
+    <view wx:else class="location-empty">
+      <view class="empty-mark">+</view>
+      <view class="empty-title">尚未设置出发点</view>
+      <view class="empty-copy">选择办公室、学校或固定集合点。</view>
+    </view>
+
+    <button class="button secondary" bindtap="chooseOrigin">{{hasOrigin ? '重新选点' : '在地图中选点'}}</button>
+    <button wx:if="{{hasOrigin}}" class="button primary" loading="{{saving}}" disabled="{{saving || clearing}}" bindtap="saveOrigin">保存为小组出发点</button>
+    <button wx:if="{{hasOrigin}}" class="clear-button" loading="{{clearing}}" disabled="{{clearing || saving}}" bindtap="clearOrigin">清除出发点</button>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">正在加载...</view>
+</view>

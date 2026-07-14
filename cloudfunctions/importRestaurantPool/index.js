@@ -9,6 +9,20 @@ function normalizeTags(tags) {
   return [];
 }
 
+function normalizeLocation(value) {
+  if (!value) return null;
+  const latitude = Number(value.latitude);
+  const longitude = Number(value.longitude);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+  if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return null;
+  return {
+    name: String(value.name || '').trim(),
+    address: String(value.address || '').trim(),
+    latitude,
+    longitude
+  };
+}
+
 function normalizeRestaurant(item) {
   const name = String(item.name || '').trim();
   if (!name) return null;
@@ -20,7 +34,8 @@ function normalizeRestaurant(item) {
     baseWeight: Math.max(0, Number(item.baseWeight) || 1),
     sourceUrl: String(item.sourceUrl || '').trim(),
     note: String(item.note || '').trim(),
-    disabled: Boolean(item.disabled)
+    disabled: Boolean(item.disabled),
+    location: normalizeLocation(item.location)
   };
 }
 
@@ -56,8 +71,7 @@ exports.main = async (event) => {
       skippedNames.push(restaurant.name);
       continue;
     }
-    await db.collection('restaurants').add({
-      data: {
+    const data = {
         groupId,
         ...restaurant,
         createdByOpenid: OPENID,
@@ -65,8 +79,9 @@ exports.main = async (event) => {
         importedAt: now,
         createdAt: now,
         updatedAt: now
-      }
-    });
+      };
+    if (!data.location) delete data.location;
+    await db.collection('restaurants').add({ data });
     existingKeys.add(key);
     imported += 1;
   }
